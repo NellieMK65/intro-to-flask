@@ -1,11 +1,14 @@
 # import the flask package
 from flask import Flask
-# from flask_restful import Resource, Api
+from flask_restful import Api
+
+from resources.entry import EntryResource
 
 # initialize our app
 app = Flask(__name__)
 
-# api = Api(app)
+# link flask-restful with flask
+api = Api(app)
 
 
 # GET "/"
@@ -71,3 +74,5 @@ def delete_category(id):
 
 
 # app.add_resource("/", Index)
+
+api.add_resource(EntryResource, "/entries", "/entries/<entry_id>")
