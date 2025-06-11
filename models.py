@@ -21,8 +21,13 @@ db = SQLAlchemy(metadata=metadata)
 
 
 class Category(db.Model):
-    __tablename__ = "categories"
+    __tablename__ = "my_categories"
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.TIMESTAMP)
+
+
+# /students
+# class Student(db.Model):
+#     pass
