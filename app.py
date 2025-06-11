@@ -1,14 +1,25 @@
 # import the flask package
 from flask import Flask
 from flask_restful import Api
+from flask_migrate import Migrate
 
+from models import db
 from resources.entry import EntryResource
 
 # initialize our app
 app = Flask(__name__)
 
+# configuring our flask app through the config object
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///notebook.db"
+
 # link flask-restful with flask
 api = Api(app)
+
+# create a migrate object to manage migrations
+migrate = Migrate(app, db)
+
+# link our db to the flask app
+db.init_app(app)
 
 
 # GET "/"
