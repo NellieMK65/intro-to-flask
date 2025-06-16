@@ -45,6 +45,12 @@ class Category(db.Model, SerializerMixin):
     # uselist = False -> this indicates a one relationship
     user = db.relationship("User", back_populates="categories", uselist=False)
 
+    # it removes these fields
+    serialize_rules = ("-user_id", "-user")
+
+    # specify which fields to fetch
+    # serialize_only = ("id", "name")
+
     # {
     #     "name": "Travel",
     #     "user": {
