@@ -2,13 +2,18 @@
 from flask import Flask
 from flask_restful import Api, Resource
 from flask_migrate import Migrate
+from flask_bcrypt import Bcrypt
 
 from models import db
 from resources.entry import EntryResource
 from resources.category import CategoryResource
+from resources.user import SingInResource, LoginResource
 
 # initialize our app
 app = Flask(__name__)
+
+# link our flask app with the encryption package
+bcrypt = Bcrypt(app)
 
 # configuring our flask app through the config object
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///notebook.db"
@@ -103,4 +108,5 @@ class Login(Resource):
 
 api.add_resource(EntryResource, "/entries", "/entries/<entry_id>")
 api.add_resource(CategoryResource, "/categories", "/categories/<int:id>")
-api.add_resource(Login, "/signin")
+api.add_resource(SingInResource, "/signin")
+api.add_resource(LoginResource, "/login")

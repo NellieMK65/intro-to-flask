@@ -95,13 +95,15 @@ class User(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     full_name = db.Column(db.Text, nullable=False)
     email = db.Column(db.VARCHAR, nullable=False, unique=True)
-    # password = db.Column(db.VARCHAR, nullable = False)
+    password = db.Column(db.VARCHAR, nullable=True)
     created_at = db.Column(db.TIMESTAMP, default=datetime.now())
     updated_at = db.Column(db.TIMESTAMP, onupdate=datetime.now())
 
     # define relationships
     categories = db.relationship("Category", back_populates="user")
     entries = db.relationship("Entry", back_populates="user")
+
+    serialize_rules = ("-password", "-categories", "-entries")
 
     # {
     #     "full_name": "John Doe",
