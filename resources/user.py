@@ -1,5 +1,7 @@
 from flask_restful import Resource, reqparse
 from flask_bcrypt import generate_password_hash, check_password_hash
+from flask_jwt_extended import create_access_token
+
 from models import db, User
 
 
@@ -38,6 +40,7 @@ class LoginResource(Resource):
     parser.add_argument(
         "password", required=True, type=str, help="Password is required"
     )
+    # parser.add_argument("remember_me", required=True, type=bool)
 
     def post(self):
         data = self.parser.parse_args()
@@ -50,7 +53,7 @@ class LoginResource(Resource):
 
         # 2. verify password
         if check_password_hash(user.password, data["password"]):
-            access_token = ""
+            access_token = create_access_token(identity=user.id)
 
             return {
                 "message": "Login successful",

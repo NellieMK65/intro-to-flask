@@ -1,5 +1,6 @@
 from flask import request, jsonify
 from flask_restful import Resource, reqparse
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from models import Category, db
 
@@ -23,9 +24,13 @@ class CategoryResource(Resource):
 
     # /categories
     # /categories/<id>
+    @jwt_required()
     def get(self, id=None):
+        # print("User ID", get_jwt_identity())
+        user_id = get_jwt_identity()
+
         if id is None:
-            categories = Category.query.all()
+            categories = Category.query.filter_by(user_id=user_id).all()
 
             return jsonify([category.to_dict() for category in categories])
         else:
@@ -38,18 +43,24 @@ class CategoryResource(Resource):
 
     # /categories
     # { "name": "Travel" }
+    @jwt_required()
     def post(self):
         # data = request.get_json()
+        user_id = get_jwt_identity()
+
         data = self.parser.parse_args()
 
-        category = Category(**data)
+        category = Category(**data, user_id=user_id)
 
         db.session.add(category)
         db.session.commit()
 
         return {"message": "Category added successfully"}, 201
 
+    @jwt_required()
     def patch(self, id):
+        user_id = get_jwt_identity()
+
         data = self.parser.parse_args()
 
         # retrieve the record
@@ -57,6 +68,10 @@ class CategoryResource(Resource):
 
         if category is None:
             return {"message": "Category not found"}, 404
+
+        # authorize the category belongs to the user
+        if category.user_id != user_id:
+            return {"message": "Unauthorized operation"}, 403
 
         # update instance with new values
         category.name = data["name"]

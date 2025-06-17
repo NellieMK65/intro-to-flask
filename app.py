@@ -1,24 +1,36 @@
+import os
+
 # import the flask package
 from flask import Flask
 from flask_restful import Api, Resource
 from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
+from flask_jwt_extended import JWTManager
+from dotenv import load_dotenv
 
 from models import db
 from resources.entry import EntryResource
 from resources.category import CategoryResource
 from resources.user import SingInResource, LoginResource
 
+# imports the configs stored inside the .env file
+load_dotenv()
+
 # initialize our app
 app = Flask(__name__)
 
-# link our flask app with the encryption package
-bcrypt = Bcrypt(app)
 
 # configuring our flask app through the config object
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///notebook.db"
 # allow sqlalchemy to display generate sql on the terminal
 app.config["SQLALCHEMY_ECHO"] = True
+# Setup the Flask-JWT-Extended extension
+app.config["JWT_SECRET_KEY"] = os.environ.get("JWT_SECRET")  # Change this!
+
+jwt = JWTManager(app)
+
+# link our flask app with the encryption package
+bcrypt = Bcrypt(app)
 
 # link flask-restful with flask
 api = Api(app)
